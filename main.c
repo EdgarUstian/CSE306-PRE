@@ -8,6 +8,9 @@ int main(int argc, char *argv[]) {
     else if (argc == 5){
         //open file and check min/max/mean
     }
+    else if (argc == 6){
+        //open file and check record
+    }
     else {
         return EXIT_FAILURE;
     }
