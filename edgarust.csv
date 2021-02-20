@@ -1,0 +1,4 @@
+DATE,UBIT,DURATION,ACTIVITY & TOOL DESCRIPTION
+2021/02/17,edgarust,2 hours,edited main.cusing vscode (transferred files via scp) to begin starter Code
+2021/02/18,edgarust,2 hours,edited main.cusing vscode to add argument parsing in the code
+2021/02/19,edgarust,6 hours of hardcore work, edited main.c using vscode to the best of my abilities to add as much functionality as possible (added -min -max -mean)
