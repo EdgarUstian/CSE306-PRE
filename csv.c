@@ -2,64 +2,120 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main(int argc, char *argv[]) {
-    if (argc == 3 || argc == 5 || argc == 6){
-        FILE *fp = fopen(argv[argc - 1], "r");
-        if (fp == NULL){
-            return EXIT_FAILURE;
+int main(int argc, char *argv[])
+{
+    //open file first
+    FILE *fp = fopen(argv[argc - 1], "r");
+    if (fp == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    printf("File opened\n");
+    //array of arguments
+    int iter;
+    for (iter = 1; iter < argc - 1; iter++ ){
+        printf("In the for loop %d\n", iter);
+        printf("Arg %s\n", argv[iter]);
+        char *f = "-f";
+        printf("Arg %s\n", f);
+        if (argv[iter] == "-f"){
+            printf("entered -f\n");
+            //get first line of array and split on commas
+            char *line = NULL;
+            size_t z = 0;
+            getline(&line, &z, fp);
+            int fields = 1;
+            char *field;
+            field = strtok(line, ",");
+            while (field != NULL){
+                fields += 1;
+                field = strtok(NULL, ",");
+            }
+            printf("%d\n", fields);
         }
-        if (argc == 3){
-            //open file and count fields or records
-            if (argv[2] == "-f"){
-                char *line = NULL;
-                //dont know 2nd argument should be a size
-                fgets(line, ,fp);
-                char *field = strtok(line, ",");
-                int fieldnum = 1;
-                while (field != NULL){
-                    fieldnum += 1;
-                    field = strtok(NULL, ",");
+        if (argv[iter] == "-r"){
+            int records = 1;
+            char *line = NULL;
+            size_t z = 0;
+            ssize_t bytesread;
+            while ((bytesread = getline(&line, &z, fp)) != -1){
+                char *record = strtok(line, ",");
+                while (record != NULL){
+                    records += 1;
+                    record = strtok(NULL, ",");
                 }
-                printf("%d",fieldnum);
             }
-            else if (argv[2] == "-r"){
-                
-            }
-            else {
-                return EXIT_FAILURE
-            }
+            printf("%d\n", records);
         }
-        else if (argc == 5){
-            //open file and check min/max/mean
-            if (argv[1] == "-h"){
-                char *line = NULL;
-                //dont know 2nd argument should be a size
-                fgets(line, ,fp);
-                char *field = strtok(line, ",");
-                int num = 1;
-                int fiendnum = 1;
-                if (field != argv[4]){
-                    while (field != NULL){
-                        num += 1;
-                        field = strtok(NULL, ",");
-                        if (field == argv[4]){
-                            fiendnum = num;
+        if (argv[iter] == "-h"){
+            char *m = argv[iter + 1];
+            char *targetfield = argv[iter + 2];
+            char *line = NULL;
+            size_t z = 0;
+            getline(&line, &z, fp);
+            int targetnum;
+            int num = 0;
+            char *field = strtok(line, ",");
+            while (field != NULL){
+                field = strtok(NULL, ",");
+                if (field == targetfield){
+                    targetnum = num;
+                }
+                num += 1;
+            }
+            if (m == "-min"){
+                ssize_t bytesread;
+                int lowest = 10000000;
+                while ((bytesread = getline(&line, &z, fp)) != -1){
+                    char *record = strtok(line, ",");
+                    int fieldcount = 0;
+                    while (record != NULL){
+                        if (fieldcount == targetnum){
+                            if (atoi(record) < lowest){
+                                lowest = atoi(record);
+                            }
                         }
+                        fieldcount += 1;
+                        record = strtok(NULL, ",");
                     }
                 }
-                //go through rest of file to compare values for min/max/avg
+                printf("%d\n", lowest);
             }
-            else {
-                return EXIT_FAILURE
+            if (m == "-max"){
+                ssize_t bytesread;
+                int highest = 0;
+                while ((bytesread = getline(&line, &z, fp)) != -1){
+                    char *record = strtok(line, ",");
+                    int fieldcount = 0;
+                    while (record != NULL){
+                        if (fieldcount == targetnum){
+                            if (atoi(record) > highest){
+                                highest = atoi(record);
+                            }
+                        }
+                        fieldcount += 1;
+                        record = strtok(NULL, ",");
+                    }
+                }
+                printf("%d\n", highest);
+            }
+            if (m == "-mean"){
+                ssize_t bytesread;
+                int sum = 0;
+                int fieldcount = 0;
+                while ((bytesread = getline(&line, &z, fp)) != -1){
+                    char *record = strtok(line, ",");
+                    while (record != NULL){
+                        if (fieldcount == targetnum){
+                            sum += atoi(record);
+                        }
+                        fieldcount += 1;
+                        record = strtok(NULL, ",");
+                    }
+                }
+                printf("%d\n", sum/fieldcount);
             }
         }
-        else if (argc == 6){
-            //open file and check record
-        }
-    }
-    else {
-        return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
 }
-
